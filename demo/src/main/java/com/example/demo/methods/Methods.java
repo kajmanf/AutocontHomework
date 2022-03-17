@@ -1,10 +1,9 @@
 package com.example.demo.methods;
 
 import com.example.demo.model.Duelist;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Scanner;
+
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 public class Methods {
@@ -56,7 +55,7 @@ public class Methods {
                         next1 = true;
                     }
                 } catch (NumberFormatException nfe){
-                    System.out.println("Not valid input, try again! (should look like 0.1234567)");
+                    System.out.println("Not valid input, try again! (should look like '0.1234567')");
                 }
             }
 
@@ -65,30 +64,95 @@ public class Methods {
 
             if (duelistCounter > 1){
                 System.out.println("You currently have " + duelistCounter + " duelists, do you wanna add some more? (y/n):");
-                boolean next2 = false;
-                while (next2 == false) {
-                    Scanner inputAddMore = new Scanner(System.in);
-                    String addMore = inputAddMore.nextLine();
-                    if (addMore.equals("n")) {
-                        finish = true;
-                        next2 = true;
-                    } else if (addMore.equals("y")){
-                        next2 = true;
-                    } else {
-                        System.out.println("Not valid input, try again! (You should use character 'y' or 'n')");
-                    }
+                Scanner inputAddMore = new Scanner(System.in);
+                String addMore = inputAddMore.nextLine();
+                boolean continuer = yesOrNoChecker(addMore);
+                if (!continuer){
+                    finish = true;
                 }
             }
             duelistCounter++;
         }
 
-        List<Duelist> duelistsSorted = duelists.stream()
-                .sorted(Comparator.comparing(Duelist::getAccuracy))
-                .collect(Collectors.toList());
-
-        return duelistsSorted;
+        return duelists;
     }
 
+    public static boolean yesOrNoChecker(String stringToCheck) {
+        boolean answer = true;
+        boolean next = false;
+        String continuer = stringToCheck;
+        while (next == false) {
+            if (continuer.equals("n")) {
+                answer = false;
+                next = true;
+            } else if (continuer.equals("y")) {
+                next = true;
+            } else {
+                System.out.println("Not valid input, try again! (You should use character 'y' or 'n')");
+                Scanner inputContinuer = new Scanner(System.in);
+                continuer = inputContinuer.nextLine();
+            }
+        }
+        return answer;
+    }
 
+    public static Integer chooseDuelist(int nmbrOfUsers) {
+        boolean next = false;
+        int userPosition = 0;
+        while (next == false) {
+            Scanner inputContinuer = new Scanner(System.in);
+            String continuer = inputContinuer.nextLine();
+            try {
+                int integer = Integer.parseInt(continuer);
+                if (integer > 0 && integer <= nmbrOfUsers){
+                    userPosition = integer;
+                    next = true;
+                };
+            } catch (NumberFormatException nfe){
+                System.out.println("Not valid input, try again! (should look like '1')");
+            }
+        }
+        return userPosition;
+    }
+
+    public static Integer numberOfTests() {
+        int tests = 0;
+        while (tests == 0) {
+            Scanner inputContinuer = new Scanner(System.in);
+            String continuer = inputContinuer.nextLine();
+            try {
+                int integer = Integer.parseInt(continuer);
+                if (integer > 0){
+                    tests = integer;
+                };
+            } catch (NumberFormatException nfe){
+                System.out.println("Not valid input, try again! (must be integer bigger than 0 => should look like '9999')");
+            }
+        }
+        return tests;
+    }
+
+    public static void pressEnterToContinue(){
+        System.out.println("Press enter to continue....");
+        Scanner input = new Scanner(System.in);
+        String continuer = input.nextLine();
+        return;
+    }
+
+    public static int[] battle(Duelist duelist1, Duelist duelist2, int nmbrOfTests){
+        int counter1 = 0;
+        int counter2 = 0;
+        for (int i = 0; i < nmbrOfTests; i++) {
+            double result1 = ThreadLocalRandom.current().nextDouble(0, duelist1.getAccuracy());
+            double result2 = ThreadLocalRandom.current().nextDouble(0, duelist2.getAccuracy());
+            if (result1 > result2) {
+                counter1++;
+            } else {
+                counter2++;
+            }
+        }
+        int[] battleResults = {counter1, counter2};
+        return battleResults;
+    }
 
 }
