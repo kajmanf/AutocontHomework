@@ -139,20 +139,25 @@ public class Methods {
         return;
     }
 
-    public static int[] battle(Duelist duelist1, Duelist duelist2, int nmbrOfTests){
-        int counter1 = 0;
-        int counter2 = 0;
+    public static double battle(Duelist duelist1, int nmbrOfTests){
+        double counter1 = 0;
         for (int i = 0; i < nmbrOfTests; i++) {
-            double result1 = ThreadLocalRandom.current().nextDouble(0, duelist1.getAccuracy());
-            double result2 = ThreadLocalRandom.current().nextDouble(0, duelist2.getAccuracy());
-            if (result1 > result2) {
+            double result1 = Math.random();
+            if (result1 <= duelist1.getAccuracy()) {
                 counter1++;
-            } else {
-                counter2++;
             }
         }
-        int[] battleResults = {counter1, counter2};
+        double battleResults = counter1/nmbrOfTests;
         return battleResults;
+    }
+
+    public static boolean shot(double accuracy){
+        double result1 = Math.random();
+        if (result1 <= accuracy) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }
